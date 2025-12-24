@@ -137,24 +137,26 @@ password-generator/
 
 ## 安装部署
 
-### 环境要求
+### 方式一：传统部署
+
+#### 环境要求
 
 - Node.js >= 14.0.0
 - npm >= 6.0.0
 
-### 安装步骤
+#### 安装步骤
 
-#### 1. 克隆或下载项目
+##### 1. 克隆或下载项目
 
 ```bash
 # 如果使用 Git
-git clone <repository-url>
-cd password-generator
+ git clone <repository-url>
+ cd password-generator
 
 # 或直接解压下载的文件
 ```
 
-#### 2. 安装依赖
+##### 2. 安装依赖
 
 ```bash
 npm install
@@ -166,7 +168,7 @@ npm install
 - helmet: ^7.0.0
 - express-rate-limit: ^6.10.0
 
-#### 3. 启动服务器
+##### 3. 启动服务器
 
 **生产模式：**
 ```bash
@@ -179,11 +181,159 @@ npm install --save-dev nodemon
 npm run dev
 ```
 
-#### 4. 访问应用
+##### 4. 访问应用
 
 打开浏览器访问：
 ```
 http://localhost:3001
+```
+
+### 方式二：Docker 容器化部署 ⭐ 推荐
+
+#### 环境要求
+
+- Docker >= 20.10.0
+- Docker Compose >= 1.29.0（可选，用于编排）
+
+#### 快速开始
+
+##### 1. 构建并启动容器
+
+```bash
+# 构建镜像
+ docker build -t yv-passwd .
+
+# 启动容器
+ docker run -d -p 3001:3001 --name yv-passwd-app yv-passwd
+```
+
+##### 2. 使用 Docker Compose（推荐）
+
+```bash
+# 启动服务
+ docker-compose up -d
+
+# 查看运行状态
+ docker-compose ps
+
+# 查看日志
+ docker-compose logs -f
+
+# 停止服务
+ docker-compose down
+```
+
+##### 3. 访问应用
+
+打开浏览器访问：
+```
+http://localhost:3001
+```
+
+#### Docker 部署详情
+
+##### 镜像特点
+
+- ✅ 基于 Node.js 18 Alpine 镜像，体积小巧（~100MB）
+- ✅ 多阶段构建优化，生产环境只包含必要依赖
+- ✅ 内置健康检查，自动监控服务状态
+- ✅ 支持环境变量配置
+- ✅ 无需额外 Web 服务器（如 Nginx），直接运行
+
+##### 环境变量配置
+
+可通过环境变量自定义配置：
+
+```bash
+docker run -d \
+  -p 3001:3001 \
+  -e NODE_ENV=production \
+  -e PORT=3001 \
+  --name yv-passwd-app \
+  yv-passwd
+```
+
+支持的变量：
+- `NODE_ENV`: 运行环境（development/production）
+- `PORT`: 服务端口（默认：3001）
+
+##### 生产环境建议
+
+**使用 Docker Compose 部署到生产环境：**
+
+```yaml
+# docker-compose.prod.yml
+version: '3.8'
+
+services:
+  password-generator:
+    build: .
+    ports:
+      - "3001:3001"
+    environment:
+      - NODE_ENV=production
+      - PORT=3001
+    restart: always
+    healthcheck:
+      test: ["CMD-SHELL", "node -e \"require('http').get('http://localhost:3001', (r) => {if (r.statusCode !== 200) throw new Error()})\" || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    container_name: yv-passwd-prod
+    # 如果需要持久化日志
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+```
+
+启动生产环境：
+```bash
+docker-compose -f docker-compose.prod.yml up -d
+```
+
+##### 容器管理命令
+
+```bash
+# 查看容器状态
+docker ps
+
+# 查看容器日志
+docker logs -f yv-passwd-app
+
+# 重启容器
+docker restart yv-passwd-app
+
+# 停止并删除容器
+docker stop yv-passwd-app
+docker rm yv-passwd-app
+
+# 更新镜像
+docker pull node:18-alpine  # 确保基础镜像最新
+docker build -t yv-passwd . --no-cache
+docker-compose up -d --force-recreate
+```
+
+##### 故障排查
+
+**容器无法启动：**
+```bash
+# 查看详细日志
+docker logs yv-passwd-app
+
+# 进入容器调试
+docker exec -it yv-passwd-app sh
+```
+
+**端口冲突：**
+```bash
+# 检查端口占用
+lsof -i :3001
+
+# 使用其他端口
+docker run -d -p 8080:3001 --name yv-passwd-app yv-passwd
 ```
 
 ### 端口配置
@@ -671,6 +821,100 @@ pm2 save
 - 提交 Pull Request
 
 ---
+
+## 提交规范和授权
+
+### 代码提交规范
+
+本项目采用 [Conventional Commits](https://www.conventionalcommits.org/) 规范，所有提交必须通过 commitlint 检查。
+
+#### 提交格式
+
+```
+<类型>[可选的作用域]: <描述>
+
+[可选的正文]
+
+[可选的脚注]
+```
+
+#### 类型枚举
+
+- `feat`: 新功能
+- `fix`: bug修复
+- `docs`: 文档变更
+- `style`: 代码格式（不影响代码运行的变动）
+- `refactor`: 重构（既不是新增功能，也不是修改bug的代码变动）
+- `perf`: 性能优化
+- `test`: 添加测试
+- `chore`: 构建过程或辅助工具的变动
+- `ci`: CI配置文件和脚本的变动
+- `revert`: 回滚commit
+- `security`: 安全相关
+
+#### 提交示例
+
+```bash
+feat(generator): 添加生物识别密码生成算法
+fix(api): 修复密码强度计算边界条件
+docs(readme): 更新 Docker 部署说明
+security(auth): 增强随机数生成安全性
+```
+
+#### 本地开发流程
+
+1. **安装依赖**
+   ```bash
+   npm install
+   ```
+
+2. **启用 Git Hooks**
+   ```bash
+   npm run prepare
+   ```
+
+3. **提交代码**
+   ```bash
+   git add .
+   npm run commit  # 或使用 git commit
+   ```
+
+#### Git Hooks 说明
+
+- `pre-commit`: 自动运行 lint-staged，检查暂存区代码
+- `commit-msg`: 验证提交信息格式
+- `pre-push`: 推送前运行测试
+
+### 授权协议
+
+本项目采用 **MIT 许可证**，详细信息请参阅 [LICENSE](LICENSE) 文件。
+
+#### 使用权限
+
+- ✅ 可以自由使用、复制、修改、合并、发布、分发、再许可和销售软件
+- ✅ 可以用于商业目的
+- ✅ 可以修改源代码
+- ✅ 可以闭源分发修改后的版本
+
+#### 限制条件
+
+- ⚠️ 必须在所有副本或重要部分中包含版权声明和许可声明
+- ⚠️ 软件按"原样"提供，无任何明示或暗示的担保
+- ⚠️ 作者不对因使用该软件而产生的任何索赔、损害或其他责任负责
+
+### 行为准则
+
+本项目遵循 [Contributor Covenant](https://www.contributor-covenant.org/) 行为准则。参与项目即表示同意遵守相关条款。详细信息请参阅 [CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md)。
+
+## 贡献指南
+
+欢迎贡献代码！请阅读 [CONTRIBUTING.md](CONTRIBUTING.md) 了解详细的贡献流程和要求。
+
+主要步骤：
+1. Fork 项目并创建特性分支
+2. 遵循代码风格和提交规范
+3. 添加必要的测试
+4. 提交 Pull Request
 
 ## 更新日志
 
