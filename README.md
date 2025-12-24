@@ -724,9 +724,9 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 
 ## 联系方式
 
-- **项目主页**: [GitHub Repository]
-- **问题反馈**: [GitHub Issues]
-- **邮箱**: your-email@example.com
+- **项目主页**: [GitHub Repository](https://github.com/AaronYang233/yv-passwd)
+- **问题反馈**: [GitHub Issues](https://github.com/AaronYang233/yv-passwd/issues)
+- **邮箱**: 3300390005@qq.com
 
 ---
 
