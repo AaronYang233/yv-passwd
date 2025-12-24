@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>企业级密码生成器</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div id="app">
+        <div class="card">
+            <!-- 头部 -->
+            <div class="hdr">
+                <div class="logo">🔐</div>
+                <div>
+                    <div>企业级密码生成器</div>
+                    <div>Enterprise Password Generator</div>
+                </div>
+            </div>
+
+            <!-- 主体内容 -->
+            <div class="body">
+                <!-- 密码类型选择 -->
+                <div class="type-section">
+                    <h3>选择密码类型</h3>
+                    <div class="type-buttons">
+                        <button class="type-btn active" data-type="random">
+                            <span class="type-icon">🎲</span>
+                            <span class="type-label">随机强密码</span>
+                            <span class="type-desc">高强度随机字符</span>
+                        </button>
+                        <button class="type-btn" data-type="memorable">
+                            <span class="type-icon">💡</span>
+                            <span class="type-label">易记密码</span>
+                            <span class="type-desc">单词组合形式</span>
+                        </button>
+                        <button class="type-btn" data-type="pin">
+                            <span class="type-icon">#</span>
+                            <span class="type-label">PIN 码</span>
+                            <span class="type-desc">纯数字密码</span>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="divider"></div>
+
+                <!-- 随机密码配置 -->
+                <div class="config-section" id="random-config">
+                    <h3>密码配置</h3>
+                    
+                    <div class="config-item">
+                        <label>密码长度</label>
+                        <div class="slider-container">
+                            <input type="range" id="length" min="8" max="64" value="16" class="slider">
+                            <span class="slider-value">16</span>
+                        </div>
+                    </div>
+
+                    <div class="options-grid">
+                        <div class="option-item">
+                            <label class="switch">
+                                <input type="checkbox" id="uppercase" checked>
+                                <span class="slider-switch"></span>
+                            </label>
+                            <div class="option-text">
+                                <div class="option-label">大写字母</div>
+                                <div class="option-desc">A-Z</div>
+                            </div>
+                        </div>
+                        <div class="option-item">
+                            <label class="switch">
+                                <input type="checkbox" id="lowercase" checked>
+                                <span class="slider-switch"></span>
+                            </label>
+                            <div class="option-text">
+                                <div class="option-label">小写字母</div>
+                                <div class="option-desc">a-z</div>
+                            </div>
+                        </div>
+                        <div class="option-item">
+                            <label class="switch">
+                                <input type="checkbox" id="numbers" checked>
+                                <span class="slider-switch"></span>
+                            </label>
+                            <div class="option-text">
+                                <div class="option-label">数字</div>
+                                <div class="option-desc">0-9</div>
+                            </div>
+                        </div>
+                        <div class="option-item">
+                            <label class="switch">
+                                <input type="checkbox" id="symbols" checked>
+                                <span class="slider-switch"></span>
+                            </label>
+                            <div class="option-text">
+                                <div class="option-label">特殊符号</div>
+                                <div class="option-desc">!@#$%</div>
+                            </div>
+                        </div>
+                        <div class="option-item">
+                            <label class="switch">
+                                <input type="checkbox" id="excludeAmbiguous">
+                                <span class="slider-switch"></span>
+                            </label>
+                            <div class="option-text">
+                                <div class="option-label">排除易混淆字符</div>
+                                <div class="option-desc">如 i, l, 1, O, 0</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 易记密码配置 -->
+                <div class="config-section hidden" id="memorable-config">
+                    <h3>密码配置</h3>
+                    
+                    <div class="config-item">
+                        <label>单词数量</label>
+                        <div class="slider-container">
+                            <input type="range" id="wordCount" min="2" max="6" value="4" class="slider">
+                            <span class="slider-value">4</span>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>分隔符</label>
+                            <select id="separator">
+                                <option value="-">连字符 (-)</option>
+                                <option value="_">下划线 (_)</option>
+                                <option value=".">点号 (.)</option>
+                                <option value="">无分隔符</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="options-grid">
+                        <div class="option-item">
+                            <label class="switch">
+                                <input type="checkbox" id="capitalize" checked>
+                                <span class="slider-switch"></span>
+                            </label>
+                            <div class="option-text">
+                                <div class="option-label">首字母大写</div>
+                                <div class="option-desc">Apple-Banana</div>
+                            </div>
+                        </div>
+                        <div class="option-item">
+                            <label class="switch">
+                                <input type="checkbox" id="includeNumber" checked>
+                                <span class="slider-switch"></span>
+                            </label>
+                            <div class="option-text">
+                                <div class="option-label">包含数字</div>
+                                <div class="option-desc">末尾添加数字</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- PIN码配置 -->
+                <div class="config-section hidden" id="pin-config">
+                    <h3>密码配置</h3>
+                    
+                    <div class="config-item">
+                        <label>PIN 码位数</label>
+                        <div class="slider-container">
+                            <input type="range" id="pinLength" min="4" max="12" value="6" class="slider">
+                            <span class="slider-value">6</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="divider"></div>
+
+                <!-- 生成的密码显示 -->
+                <div class="password-section">
+                    <h3>生成的密码</h3>
+                    <div class="password-display">
+                        <div class="password-text" id="generatedPassword">点击"生成密码"开始</div>
+                        <button class="icon-btn copy-btn" id="copyBtn" title="复制密码">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                                <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                            </svg>
+                        </button>
+                    </div>
+
+                    <!-- 密码强度指示器 -->
+                    <div class="strength-indicator" id="strengthIndicator">
+                        <div class="strength-bar">
+                            <div class="strength-fill" id="strengthFill"></div>
+                        </div>
+                        <div class="strength-text" id="strengthText"></div>
+                    </div>
+
+                    <div class="action-buttons">
+                        <button class="btn btn-primary" id="generateBtn">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <polyline points="23 4 23 10 17 10"></polyline>
+                                <path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"></path>
+                            </svg>
+                            生成密码
+                        </button>
+                        <button class="btn btn-secondary" id="copyBtnLarge">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                                <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                            </svg>
+                            复制密码
+                        </button>
+                    </div>
+                </div>
+
+                <div class="divider"></div>
+
+                <!-- 密码历史记录 -->
+                <div class="history-section">
+                    <div class="section-header">
+                        <h3>密码历史</h3>
+                        <button class="refresh-btn" id="clearHistory">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <polyline points="3 6 5 6 21 6"></polyline>
+                                <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                            </svg>
+                            清除历史
+                        </button>
+                    </div>
+
+                    <div class="history-list" id="historyList">
+                        <div class="empty">
+                            <div class="empty-icon">📋</div>
+                            <p>暂无历史记录</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 页脚 -->
+            <div class="footer">
+                <p>⚠️ 请妥善保管生成的密码，不要与他人分享</p>
+                <p class="footer-note">所有密码生成均在本地完成，确保安全性</p>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
