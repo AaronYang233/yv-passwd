@@ -1,582 +1,449 @@
-// 配置
+// ===== i18n =====
+const I18N = {
+  en: {
+    title: 'Password Generator',
+    subtitle: 'Enterprise Security Tool',
+    passwordType: 'Password Type',
+    typeRandom: 'Random',
+    typeRandomDesc: 'High-entropy characters',
+    typeMemorable: 'Passphrase',
+    typeMemorableDesc: 'Word-based combination',
+    typePin: 'PIN',
+    typePinDesc: 'Numeric-only code',
+    configuration: 'Configuration',
+    passwordLength: 'Password Length',
+    uppercase: 'Uppercase',
+    lowercase: 'Lowercase',
+    numbers: 'Numbers',
+    symbols: 'Symbols',
+    excludeAmbiguous: 'Exclude Ambiguous',
+    wordCount: 'Word Count',
+    separator: 'Separator',
+    sepHyphen: 'Hyphen (-)',
+    sepUnderscore: 'Underscore (_)',
+    sepDot: 'Dot (.)',
+    sepNone: 'None',
+    capitalize: 'Capitalize',
+    appendNumber: 'Append Number',
+    pinLength: 'PIN Length',
+    generatedPassword: 'Generated Password',
+    clickToStart: 'Click "Generate" to start',
+    generate: 'Generate',
+    copyPassword: 'Copy Password',
+    copyToClipboard: 'Copy to clipboard',
+    recentHistory: 'Recent History',
+    clearAll: 'Clear All',
+    noHistory: 'No history yet',
+    footerMain: 'All passwords are generated using cryptographically secure random number generators.',
+    footerSub: 'Crypto API \u00b7 Zero Storage \u00b7 Client-side Safe',
+    strengthWeak: 'Weak \u2013 increase length and complexity',
+    strengthMedium: 'Medium \u2013 acceptable, but could be stronger',
+    strengthStrong: 'Strong \u2013 very secure',
+    strengthPrefix: 'Strength',
+    generateFirst: 'Please generate a password first',
+    copied: 'Password copied to clipboard',
+    copyFailed: 'Copy failed, please copy manually',
+    historyCopied: 'Copied',
+    historyCopyFailed: 'Copy failed',
+    deleted: 'Deleted',
+    historyEmpty: 'History is already empty',
+    confirmClear: 'Are you sure you want to clear all history?',
+    historyCleared: 'History cleared',
+    genFailed: 'Generation failed',
+    typeRandomShort: 'Random',
+    typeMemorableShort: 'Passphrase',
+    typePinShort: 'PIN',
+    historyCopy: 'Copy',
+    historyDelete: 'Delete',
+  },
+  zh: {
+    title: '密码生成器',
+    subtitle: '企业安全工具',
+    passwordType: '密码类型',
+    typeRandom: '随机密码',
+    typeRandomDesc: '高熵随机字符',
+    typeMemorable: '助记词组',
+    typeMemorableDesc: '基于单词的组合',
+    typePin: 'PIN 码',
+    typePinDesc: '纯数字编码',
+    configuration: '参数配置',
+    passwordLength: '密码长度',
+    uppercase: '大写字母',
+    lowercase: '小写字母',
+    numbers: '数字',
+    symbols: '符号',
+    excludeAmbiguous: '排除易混淆字符',
+    wordCount: '单词数量',
+    separator: '分隔符',
+    sepHyphen: '连字符 (-)',
+    sepUnderscore: '下划线 (_)',
+    sepDot: '点号 (.)',
+    sepNone: '无',
+    capitalize: '首字母大写',
+    appendNumber: '附加数字',
+    pinLength: 'PIN 长度',
+    generatedPassword: '生成的密码',
+    clickToStart: '点击 "生成" 开始',
+    generate: '生成密码',
+    copyPassword: '复制密码',
+    copyToClipboard: '复制到剪贴板',
+    recentHistory: '最近记录',
+    clearAll: '清空',
+    noHistory: '暂无历史记录',
+    footerMain: '所有密码均使用密码学安全随机数生成器生成。',
+    footerSub: '加密 API \u00b7 零存储 \u00b7 客户端安全',
+    strengthWeak: '弱 \u2013 建议增加长度和复杂度',
+    strengthMedium: '中等 \u2013 可以使用，建议更强',
+    strengthStrong: '强 \u2013 非常安全',
+    strengthPrefix: '密码强度',
+    generateFirst: '请先生成密码',
+    copied: '密码已复制到剪贴板',
+    copyFailed: '复制失败，请手动复制',
+    historyCopied: '已复制',
+    historyCopyFailed: '复制失败',
+    deleted: '已删除',
+    historyEmpty: '历史记录已为空',
+    confirmClear: '确定要清除所有历史记录吗？',
+    historyCleared: '历史记录已清除',
+    genFailed: '生成失败',
+    typeRandomShort: '随机',
+    typeMemorableShort: '易记',
+    typePinShort: 'PIN',
+    historyCopy: '复制',
+    historyDelete: '删除',
+  }
+};
+
+let currentLang = localStorage.getItem('lang') || 'zh';
+
+function t(key) {
+  return (I18N[currentLang] && I18N[currentLang][key]) || key;
+}
+
+function applyI18n() {
+  document.documentElement.lang = currentLang === 'zh' ? 'zh-CN' : 'en';
+
+  // data-i18n text
+  document.querySelectorAll('[data-i18n]').forEach(el => {
+    el.textContent = t(el.dataset.i18n);
+  });
+
+  // data-i18n-title
+  document.querySelectorAll('[data-i18n-title]').forEach(el => {
+    el.title = t(el.dataset.i18nTitle);
+  });
+
+  // separator options
+  const sep = document.getElementById('separator');
+  if (sep) {
+    const opts = sep.options;
+    if (opts.length >= 4) {
+      opts[0].textContent = t('sepHyphen');
+      opts[1].textContent = t('sepUnderscore');
+      opts[2].textContent = t('sepDot');
+      opts[3].textContent = t('sepNone');
+    }
+  }
+
+  // language label
+  document.getElementById('langLabel').textContent = currentLang === 'zh' ? 'EN' : '中文';
+
+  // update strength text if password already generated
+  if (elements.generatedPassword.textContent !== t('clickToStart') &&
+      elements.strengthText.textContent) {
+    // re-render strength text is handled on next generate
+  }
+
+  // re-render history labels
+  renderHistory();
+}
+
+function toggleLang() {
+  currentLang = currentLang === 'zh' ? 'en' : 'zh';
+  localStorage.setItem('lang', currentLang);
+  applyI18n();
+}
+
+// ===== 配置 =====
 const API_BASE_URL = window.location.origin;
 
-// 状态管理
+// ===== 状态管理 =====
 let currentType = 'random';
 let passwordHistory = JSON.parse(localStorage.getItem('passwordHistory')) || [];
 
-// DOM元素
+// ===== DOM 元素 =====
 const elements = {
-    typeBtns: document.querySelectorAll('.type-btn'),
-    randomConfig: document.getElementById('random-config'),
-    memorableConfig: document.getElementById('memorable-config'),
-    pinConfig: document.getElementById('pin-config'),
-
-    lengthSlider: document.getElementById('length'),
-    lengthValue: document.querySelector('#random-config .slider-value'),
-    uppercaseCheck: document.getElementById('uppercase'),
-    lowercaseCheck: document.getElementById('lowercase'),
-    numbersCheck: document.getElementById('numbers'),
-    symbolsCheck: document.getElementById('symbols'),
-    excludeAmbiguousCheck: document.getElementById('excludeAmbiguous'),
-
-    wordCountSlider: document.getElementById('wordCount'),
-    wordCountValue: document.querySelector('#memorable-config .slider-value'),
-    capitalizeCheck: document.getElementById('capitalize'),
-    includeNumberCheck: document.getElementById('includeNumber'),
-    separatorSelect: document.getElementById('separator'),
-
-    pinLengthSlider: document.getElementById('pinLength'),
-    pinLengthValue: document.querySelector('#pin-config .slider-value'),
-
-    generatedPassword: document.getElementById('generatedPassword'),
-    strengthFill: document.getElementById('strengthFill'),
-    strengthText: document.getElementById('strengthText'),
-
-    generateBtn: document.getElementById('generateBtn'),
-    copyBtn: document.getElementById('copyBtn'),
-    copyBtnLarge: document.getElementById('copyBtnLarge'),
-    clearHistoryBtn: document.getElementById('clearHistory'),
-
-    historyList: document.getElementById('historyList')
+  typeBtns: document.querySelectorAll('.type-btn'),
+  randomConfig: document.getElementById('random-config'),
+  memorableConfig: document.getElementById('memorable-config'),
+  pinConfig: document.getElementById('pin-config'),
+  lengthSlider: document.getElementById('length'),
+  lengthValue: document.getElementById('random-value'),
+  uppercaseCheck: document.getElementById('uppercase'),
+  lowercaseCheck: document.getElementById('lowercase'),
+  numbersCheck: document.getElementById('numbers'),
+  symbolsCheck: document.getElementById('symbols'),
+  excludeAmbiguousCheck: document.getElementById('excludeAmbiguous'),
+  wordCountSlider: document.getElementById('wordCount'),
+  wordCountValue: document.getElementById('memorable-value'),
+  capitalizeCheck: document.getElementById('capitalize'),
+  includeNumberCheck: document.getElementById('includeNumber'),
+  separatorSelect: document.getElementById('separator'),
+  pinLengthSlider: document.getElementById('pinLength'),
+  pinLengthValue: document.getElementById('pin-value'),
+  generatedPassword: document.getElementById('generatedPassword'),
+  strengthFill: document.getElementById('strengthFill'),
+  strengthText: document.getElementById('strengthText'),
+  generateBtn: document.getElementById('generateBtn'),
+  copyBtn: document.getElementById('copyBtn'),
+  copyBtnLarge: document.getElementById('copyBtnLarge'),
+  clearHistoryBtn: document.getElementById('clearHistory'),
+  historyList: document.getElementById('historyList'),
+  langToggle: document.getElementById('langToggle')
 };
 
-// 初始化
+// ===== 初始化 =====
 function init() {
-    setupEventListeners();
-    renderHistory();
-    generatePassword();
+  setupEventListeners();
+  applyI18n();
+  renderHistory();
+  generatePassword();
 }
 
-// 设置事件监听器
+// ===== 设置事件监听器 =====
 function setupEventListeners() {
-    // 类型切换
-    elements.typeBtns.forEach(btn => {
-        btn.addEventListener('click', () => {
-            currentType = btn.dataset.type;
-            updateActiveType(btn);
-            showConfigSection(currentType);
-            generatePassword();
-        });
+  elements.typeBtns.forEach(btn => {
+    btn.addEventListener('click', () => {
+      currentType = btn.dataset.type;
+      updateActiveType(btn);
+      showConfigSection(currentType);
+      generatePassword();
     });
+  });
 
-    // 滑块值更新
-    elements.lengthSlider.addEventListener('input', (e) => {
-        elements.lengthValue.textContent = e.target.value;
-    });
+  elements.lengthSlider.addEventListener('input', (e) => {
+    elements.lengthValue.textContent = e.target.value;
+  });
+  elements.wordCountSlider.addEventListener('input', (e) => {
+    elements.wordCountValue.textContent = e.target.value;
+  });
+  elements.pinLengthSlider.addEventListener('input', (e) => {
+    elements.pinLengthValue.textContent = e.target.value;
+  });
 
-    elements.wordCountSlider.addEventListener('input', (e) => {
-        elements.wordCountValue.textContent = e.target.value;
-    });
+  [
+    elements.lengthSlider, elements.uppercaseCheck, elements.lowercaseCheck,
+    elements.numbersCheck, elements.symbolsCheck, elements.excludeAmbiguousCheck,
+    elements.wordCountSlider, elements.capitalizeCheck, elements.includeNumberCheck,
+    elements.separatorSelect, elements.pinLengthSlider
+  ].forEach(el => {
+    if (el) el.addEventListener('change', () => generatePassword());
+  });
 
-    elements.pinLengthSlider.addEventListener('input', (e) => {
-        elements.pinLengthValue.textContent = e.target.value;
-    });
+  elements.generateBtn.addEventListener('click', () => generatePassword());
+  elements.copyBtn.addEventListener('click', () => copyPassword());
+  elements.copyBtnLarge.addEventListener('click', () => copyPassword());
+  elements.clearHistoryBtn.addEventListener('click', () => clearHistory());
+  elements.langToggle.addEventListener('click', () => toggleLang());
 
-    // 配置变化时自动生成
-    const autoGenerateElements = [
-        elements.lengthSlider,
-        elements.uppercaseCheck,
-        elements.lowercaseCheck,
-        elements.numbersCheck,
-        elements.symbolsCheck,
-        elements.excludeAmbiguousCheck,
-        elements.wordCountSlider,
-        elements.capitalizeCheck,
-        elements.includeNumberCheck,
-        elements.separatorSelect,
-        elements.pinLengthSlider
-    ];
-
-    autoGenerateElements.forEach(el => {
-        if (el) {
-            el.addEventListener('change', () => generatePassword());
-        }
-    });
-
-    // 按钮事件
-    elements.generateBtn.addEventListener('click', () => generatePassword());
-    elements.copyBtn.addEventListener('click', () => copyPassword());
-    elements.copyBtnLarge.addEventListener('click', () => copyPassword());
-    elements.clearHistoryBtn.addEventListener('click', () => clearHistory());
+  elements.historyList.addEventListener('click', (e) => {
+    const btn = e.target.closest('.history-btn');
+    if (!btn) return;
+    const action = btn.dataset.action;
+    if (action === 'copy') copyHistoryPassword(btn.dataset.password);
+    else if (action === 'delete') deleteHistoryItem(Number(btn.dataset.id));
+  });
 }
 
-// 更新激活的类型按钮
 function updateActiveType(activeBtn) {
-    elements.typeBtns.forEach(btn => btn.classList.remove('active'));
-    activeBtn.classList.add('active');
+  elements.typeBtns.forEach(btn => btn.classList.remove('active'));
+  activeBtn.classList.add('active');
 }
 
-// 显示对应的配置区域
 function showConfigSection(type) {
-    elements.randomConfig.classList.add('hidden');
-    elements.memorableConfig.classList.add('hidden');
-    elements.pinConfig.classList.add('hidden');
-
-    switch (type) {
-        case 'random':
-            elements.randomConfig.classList.remove('hidden');
-            break;
-        case 'memorable':
-            elements.memorableConfig.classList.remove('hidden');
-            break;
-        case 'pin':
-            elements.pinConfig.classList.remove('hidden');
-            break;
-
-    }
+  ['random', 'memorable', 'pin'].forEach(t => {
+    elements[t + 'Config'].classList.toggle('hidden', t !== type);
+  });
 }
 
-// 生成密码
+// ===== API 请求封装 =====
+async function apiPost(endpoint, body) {
+  const response = await fetch(`${API_BASE_URL}${endpoint}`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(body)
+  });
+  if (!response.ok) {
+    throw new Error(`${t('genFailed')} (${response.status})`);
+  }
+  const data = await response.json();
+  if (!data.success) {
+    throw new Error(data.error || t('genFailed'));
+  }
+  return data;
+}
+
+// ===== 生成密码 =====
 async function generatePassword() {
-    try {
-        let password, strength;
-
-        switch (currentType) {
-            case 'random':
-                ({ password, strength } = await generateRandomPassword());
-                break;
-            case 'memorable':
-                ({ password, strength } = await generateMemorablePassword());
-                break;
-            case 'pin':
-                ({ password } = await generatePINPassword());
-                strength = null;
-                break;
-        }
-
-        displayPassword(password, strength);
-        addToHistory(password, currentType);
-
-    } catch (error) {
-        console.error('生成密码失败:', error);
-        showToast('生成密码失败，请重试', 'error');
-    }
-}
-
-// 生成随机密码
-async function generateRandomPassword() {
-    const options = {
-        length: parseInt(elements.lengthSlider.value),
-        includeUppercase: elements.uppercaseCheck.checked,
-        includeLowercase: elements.lowercaseCheck.checked,
-        includeNumbers: elements.numbersCheck.checked,
-        includeSymbols: elements.symbolsCheck.checked,
-        excludeAmbiguous: elements.excludeAmbiguousCheck.checked
-    };
-
-    try {
-        const response = await fetch(`${API_BASE_URL}/api/generate`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(options)
+  try {
+    let data;
+    switch (currentType) {
+      case 'random':
+        data = await apiPost('/api/generate', {
+          length: parseInt(elements.lengthSlider.value),
+          includeUppercase: elements.uppercaseCheck.checked,
+          includeLowercase: elements.lowercaseCheck.checked,
+          includeNumbers: elements.numbersCheck.checked,
+          includeSymbols: elements.symbolsCheck.checked,
+          excludeAmbiguous: elements.excludeAmbiguousCheck.checked
         });
-
-        const data = await response.json();
-
-        if (data.success) {
-            return {
-                password: data.password,
-                strength: data.strength
-            };
-        } else {
-            throw new Error(data.error);
-        }
-    } catch (error) {
-        return generateRandomPasswordLocal(options);
-    }
-}
-
-// 本地生成随机密码
-function generateRandomPasswordLocal(options) {
-    const {
-        length,
-        includeUppercase,
-        includeLowercase,
-        includeNumbers,
-        includeSymbols,
-        excludeAmbiguous
-    } = options;
-
-    let charset = '';
-    const lowercase = 'abcdefghijklmnopqrstuvwxyz';
-    const uppercase = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
-    const numbers = '0123456789';
-    const symbols = '!@#$%^&*()_+-=[]{}|;:,.<>?';
-    const ambiguous = 'il1Lo0O';
-
-    let requiredChars = [];
-
-    if (includeLowercase) {
-        let chars = lowercase;
-        if (excludeAmbiguous) {
-            chars = chars.split('').filter(c => !ambiguous.includes(c)).join('');
-        }
-        charset += chars;
-        requiredChars.push(chars[getRandomInt(chars.length)]);
-    }
-
-    if (includeUppercase) {
-        let chars = uppercase;
-        if (excludeAmbiguous) {
-            chars = chars.split('').filter(c => !ambiguous.includes(c)).join('');
-        }
-        charset += chars;
-        requiredChars.push(chars[getRandomInt(chars.length)]);
-    }
-
-    if (includeNumbers) {
-        let chars = numbers;
-        if (excludeAmbiguous) {
-            chars = chars.split('').filter(c => !ambiguous.includes(c)).join('');
-        }
-        charset += chars;
-        requiredChars.push(chars[getRandomInt(chars.length)]);
-    }
-
-    if (includeSymbols) {
-        charset += symbols;
-        requiredChars.push(symbols[getRandomInt(symbols.length)]);
-    }
-
-    if (charset.length === 0) {
-        throw new Error('至少需要选择一种字符类型');
-    }
-
-    let password = requiredChars.join('');
-
-    for (let i = password.length; i < length; i++) {
-        password += charset[getRandomInt(charset.length)];
-    }
-
-    password = shuffleString(password);
-    const strength = calculateStrength(password);
-
-    return { password, strength };
-}
-
-// 生成易记密码
-async function generateMemorablePassword() {
-    const options = {
-        wordCount: parseInt(elements.wordCountSlider.value),
-        separator: elements.separatorSelect.value,
-        capitalize: elements.capitalizeCheck.checked,
-        includeNumber: elements.includeNumberCheck.checked
-    };
-
-    try {
-        const response = await fetch(`${API_BASE_URL}/api/generate-memorable`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(options)
+        break;
+      case 'memorable':
+        data = await apiPost('/api/generate-memorable', {
+          wordCount: parseInt(elements.wordCountSlider.value),
+          separator: elements.separatorSelect.value,
+          capitalize: elements.capitalizeCheck.checked,
+          includeNumber: elements.includeNumberCheck.checked
         });
-
-        const data = await response.json();
-
-        if (data.success) {
-            return {
-                password: data.password,
-                strength: data.strength
-            };
-        } else {
-            throw new Error(data.error);
-        }
-    } catch (error) {
-        return generateMemorablePasswordLocal(options);
-    }
-}
-
-// 本地生成易记密码
-function generateMemorablePasswordLocal(options) {
-    const { wordCount, separator, capitalize, includeNumber } = options;
-
-    const words = [
-        'apple', 'banana', 'cherry', 'dragon', 'eagle', 'forest', 'garden', 'happy',
-        'island', 'jungle', 'kitten', 'lemon', 'mountain', 'nature', 'ocean', 'planet',
-        'queen', 'river', 'sunset', 'tiger', 'umbrella', 'valley', 'winter', 'yellow',
-        'zebra', 'anchor', 'bridge', 'castle', 'diamond', 'energy', 'falcon', 'galaxy',
-        'harbor', 'iceberg', 'jasmine', 'kingdom', 'lantern', 'meadow', 'nebula', 'orchid'
-    ];
-
-    let password = [];
-
-    for (let i = 0; i < wordCount; i++) {
-        let word = words[getRandomInt(words.length)];
-        if (capitalize) {
-            word = word.charAt(0).toUpperCase() + word.slice(1);
-        }
-        password.push(word);
-    }
-
-    if (includeNumber) {
-        password.push((getRandomInt(900) + 100).toString());
-    }
-
-    const finalPassword = password.join(separator);
-    const strength = calculateStrength(finalPassword);
-
-    return { password: finalPassword, strength };
-}
-
-// 生成PIN码
-async function generatePINPassword() {
-    const length = parseInt(elements.pinLengthSlider.value);
-
-    try {
-        const response = await fetch(`${API_BASE_URL}/api/generate-pin`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({ length })
+        break;
+      case 'pin':
+        data = await apiPost('/api/generate-pin', {
+          length: parseInt(elements.pinLengthSlider.value)
         });
-
-        const data = await response.json();
-
-        if (data.success) {
-            return { password: data.password };
-        } else {
-            throw new Error(data.error);
-        }
-    } catch (error) {
-        return generatePINPasswordLocal(length);
+        break;
     }
+    displayPassword(data.password, data.strength);
+    addToHistory(data.password, currentType);
+  } catch (error) {
+    console.error('Generate failed:', error);
+    showToast(t('genFailed') + ': ' + error.message, 'error');
+  }
 }
 
-// 本地生成PIN码
-function generatePINPasswordLocal(length) {
-    let pin = '';
-    for (let i = 0; i < length; i++) {
-        pin += getRandomInt(10).toString();
-    }
-    return { password: pin };
-}
-
-// 计算密码强度
-function calculateStrength(password) {
-    let strength = 0;
-    const checks = {
-        length: password.length >= 12,
-        lowercase: /[a-z]/.test(password),
-        uppercase: /[A-Z]/.test(password),
-        numbers: /[0-9]/.test(password),
-        symbols: /[^a-zA-Z0-9]/.test(password),
-        longLength: password.length >= 16
-    };
-
-    strength += checks.length ? 20 : 0;
-    strength += checks.lowercase ? 15 : 0;
-    strength += checks.uppercase ? 15 : 0;
-    strength += checks.numbers ? 15 : 0;
-    strength += checks.symbols ? 20 : 0;
-    strength += checks.longLength ? 15 : 0;
-
-    let level = 'weak';
-    if (strength >= 80) level = 'strong';
-    else if (strength >= 60) level = 'medium';
-
-    return { score: strength, level, checks };
-}
-
-// 显示密码
 function displayPassword(password, strength) {
-    elements.generatedPassword.textContent = password;
+  elements.generatedPassword.textContent = password;
 
-    if (strength) {
-        elements.strengthFill.className = 'strength-fill ' + strength.level;
+  if (strength) {
+    elements.strengthFill.className = 'strength-fill ' + strength.level;
+    elements.strengthFill.style.width = strength.score + '%';
 
-        const levelText = {
-            weak: '弱 - 建议增加长度和复杂度',
-            medium: '中等 - 可以使用，建议更强',
-            strong: '强 - 非常安全'
-        };
-
-        elements.strengthText.textContent = `密码强度: ${levelText[strength.level]} (${strength.score}/100)`;
-        elements.strengthText.style.color =
-            strength.level === 'strong' ? '#059669' :
-                strength.level === 'medium' ? '#d97706' :
-                    '#dc2626';
-    } else {
-        elements.strengthFill.className = 'strength-fill';
-        elements.strengthFill.style.width = '0%';
-        elements.strengthText.textContent = '';
-    }
+    const levelKey = { weak: 'strengthWeak', medium: 'strengthMedium', strong: 'strengthStrong' };
+    elements.strengthText.textContent = `${t('strengthPrefix')}: ${t(levelKey[strength.level])} (${strength.score}/100)`;
+    elements.strengthText.style.color =
+      strength.level === 'strong' ? '#059669' :
+      strength.level === 'medium' ? '#d97706' :
+      '#dc2626';
+  } else {
+    elements.strengthFill.className = 'strength-fill';
+    elements.strengthFill.style.width = '0%';
+    elements.strengthText.textContent = '';
+  }
 }
 
-// 复制密码
 function copyPassword() {
-    const password = elements.generatedPassword.textContent;
-
-    if (password === '点击"生成密码"开始') {
-        showToast('请先生成密码', 'error');
-        return;
-    }
-
-    navigator.clipboard.writeText(password).then(() => {
-        showToast('✓ 密码已复制到剪贴板', 'success');
-    }).catch(err => {
-        console.error('复制失败:', err);
-        showToast('复制失败，请手动复制', 'error');
-    });
-}
-
-// 添加到历史记录
-function addToHistory(password, type) {
-    const timestamp = new Date().toLocaleString('zh-CN', {
-        year: 'numeric',
-        month: '2-digit',
-        day: '2-digit',
-        hour: '2-digit',
-        minute: '2-digit'
-    });
-
-    const historyItem = {
-        password,
-        type,
-        timestamp,
-        id: Date.now()
-    };
-
-    passwordHistory.unshift(historyItem);
-
-    if (passwordHistory.length > 20) {
-        passwordHistory = passwordHistory.slice(0, 20);
-    }
-
-    localStorage.setItem('passwordHistory', JSON.stringify(passwordHistory));
-    renderHistory();
-}
-
-// 渲染历史记录
-// 渲染历史记录
-function renderHistory() {
-  if (passwordHistory.length === 0) {
-    elements.historyList.innerHTML = `
-      <div class="empty">
-        <div class="empty-icon">📋</div>
-        <p>暂无历史记录</p>
-      </div>
-    `;
+  const password = elements.generatedPassword.textContent;
+  if (password === t('clickToStart')) {
+    showToast(t('generateFirst'), 'error');
     return;
   }
-  
-  const typeLabels = {
-    random: '随机',
-    memorable: '易记',
-    pin: 'PIN'
-  };
-  
-  elements.historyList.innerHTML = passwordHistory.map(item => {
-    // 转义 HTML 特殊字符，防止 XSS 和显示问题
-    const escapedPassword = escapeHtml(item.password);
-    // 用于 onclick 的密码需要转义单引号
-    const escapedForJs = item.password.replace(/'/g, "\\'");
-    
-    return `
-      <div class="history-item">
-        <div class="history-header">
-          <span class="history-type ${item.type}">${typeLabels[item.type]}</span>
-        </div>
-        <div class="history-password">${escapedPassword}</div>
-        <div class="history-footer">
-          <span class="history-time">${item.timestamp}</span>
-          <div class="history-actions">
-            <button class="history-btn" onclick="copyHistoryPassword('${escapedForJs}')">
-              复制
-            </button>
-            <button class="history-btn" onclick="deleteHistoryItem(${item.id})">
-              删除
-            </button>
-          </div>
-        </div>
-      </div>
-    `;
-  }).join('');
+  navigator.clipboard.writeText(password).then(() => {
+    showToast(t('copied'), 'success');
+  }).catch(() => {
+    showToast(t('copyFailed'), 'error');
+  });
 }
 
-// HTML 转义函数
+function addToHistory(password, type) {
+  const timestamp = new Date().toLocaleString(currentLang === 'zh' ? 'zh-CN' : 'en-US', {
+    year: 'numeric', month: '2-digit', day: '2-digit',
+    hour: '2-digit', minute: '2-digit'
+  });
+  passwordHistory.unshift({ password, type, timestamp, id: Date.now() });
+  if (passwordHistory.length > 20) {
+    passwordHistory = passwordHistory.slice(0, 20);
+  }
+  localStorage.setItem('passwordHistory', JSON.stringify(passwordHistory));
+  renderHistory();
+}
+
 function escapeHtml(text) {
-  const map = {
-    '&': '&amp;',
-    '<': '&lt;',
-    '>': '&gt;',
-    '"': '&quot;',
-    "'": '&#039;'
-  };
+  const map = { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#039;' };
   return text.replace(/[&<>"']/g, m => map[m]);
 }
 
-// 复制历史密码
+function renderHistory() {
+  if (passwordHistory.length === 0) {
+    elements.historyList.innerHTML = `
+            <div class="empty">
+                <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="empty-icon">
+                    <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>
+                </svg>
+                <p>${t('noHistory')}</p>
+            </div>`;
+    return;
+  }
+
+  const typeKeyMap = {
+    random: 'typeRandomShort',
+    memorable: 'typeMemorableShort',
+    pin: 'typePinShort'
+  };
+
+  elements.historyList.innerHTML = passwordHistory.map(item => {
+    const escaped = escapeHtml(item.password);
+    return `
+            <div class="history-item">
+                <div class="history-header">
+                    <span class="history-type ${item.type}">${t(typeKeyMap[item.type])}</span>
+                </div>
+                <div class="history-password">${escaped}</div>
+                <div class="history-footer">
+                    <span class="history-time">${item.timestamp}</span>
+                    <div class="history-actions">
+                        <button class="history-btn" data-action="copy" data-password="${escaped}">${t('historyCopy')}</button>
+                        <button class="history-btn" data-action="delete" data-id="${item.id}">${t('historyDelete')}</button>
+                    </div>
+                </div>
+            </div>`;
+  }).join('');
+}
+
 function copyHistoryPassword(password) {
-    navigator.clipboard.writeText(password).then(() => {
-        showToast('✓ 密码已复制', 'success');
-    }).catch(err => {
-        console.error('复制失败:', err);
-        showToast('复制失败', 'error');
-    });
+  navigator.clipboard.writeText(password).then(() => {
+    showToast(t('historyCopied'), 'success');
+  }).catch(() => {
+    showToast(t('historyCopyFailed'), 'error');
+  });
 }
 
-// 删除历史记录项
 function deleteHistoryItem(id) {
-    passwordHistory = passwordHistory.filter(item => item.id !== id);
-    localStorage.setItem('passwordHistory', JSON.stringify(passwordHistory));
-    renderHistory();
-    showToast('✓ 已删除', 'success');
+  passwordHistory = passwordHistory.filter(item => item.id !== id);
+  localStorage.setItem('passwordHistory', JSON.stringify(passwordHistory));
+  renderHistory();
+  showToast(t('deleted'), 'success');
 }
 
-// 清除所有历史
 function clearHistory() {
-    if (passwordHistory.length === 0) {
-        showToast('历史记录已为空', 'error');
-        return;
-    }
-
-    if (confirm('确定要清除所有历史记录吗？')) {
-        passwordHistory = [];
-        localStorage.removeItem('passwordHistory');
-        renderHistory();
-        showToast('✓ 历史记录已清除', 'success');
-    }
+  if (passwordHistory.length === 0) {
+    showToast(t('historyEmpty'), 'error');
+    return;
+  }
+  if (confirm(t('confirmClear'))) {
+    passwordHistory = [];
+    localStorage.removeItem('passwordHistory');
+    renderHistory();
+    showToast(t('historyCleared'), 'success');
+  }
 }
 
-// 显示提示消息
 function showToast(message, type = 'success') {
-    const existingToast = document.querySelector('.toast');
-    if (existingToast) {
-        existingToast.remove();
-    }
-
-    const toast = document.createElement('div');
-    toast.className = `toast ${type}`;
-    toast.textContent = message;
-
-    document.body.appendChild(toast);
-
-    setTimeout(() => {
-        toast.remove();
-    }, 3000);
+  const existing = document.querySelector('.toast');
+  if (existing) existing.remove();
+  const toast = document.createElement('div');
+  toast.className = `toast ${type}`;
+  toast.textContent = message;
+  document.body.appendChild(toast);
+  setTimeout(() => toast.remove(), 3000);
 }
 
-// 工具函数：生成随机整数
-function getRandomInt(max, min = 0) {
-    const array = new Uint32Array(1);
-    crypto.getRandomValues(array);
-    return min + (array[0] % (max - min));
-}
-
-// 工具函数：打乱字符串
-function shuffleString(str) {
-    const arr = str.split('');
-    for (let i = arr.length - 1; i > 0; i--) {
-        const j = getRandomInt(i + 1);
-        [arr[i], arr[j]] = [arr[j], arr[i]];
-    }
-    return arr.join('');
-}
-
-// 页面加载完成后初始化
 document.addEventListener('DOMContentLoaded', init);

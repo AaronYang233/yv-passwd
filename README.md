@@ -1,5 +1,15 @@
 # 企业级密码生成器 - 完整文档
 
+<p align="center">
+  <a href="https://github.com/AaronYang233/yv-passwd/stargazers"><img src="https://img.shields.io/github/stars/AaronYang233/yv-passwd?style=social" alt="Stars"/></a>
+  <a href="https://github.com/AaronYang233/yv-passwd/network/members"><img src="https://img.shields.io/github/forks/AaronYang233/yv-passwd?style=social" alt="Forks"/></a>
+  <a href="https://github.com/AaronYang233/yv-passwd/blob/master/LICENSE"><img src="https://img.shields.io/github/license/AaronYang233/yv-passwd" alt="License"/></a>
+</p>
+
+<p align="center">
+  <b>如果这个项目对你有帮助，请给个 Star！</b> <a href="https://github.com/AaronYang233/yv-passwd">Star on GitHub :star:</a>
+</p>
+
 ## 📋 目录
 
 1. [项目简介](#项目简介)
@@ -937,7 +947,7 @@ security(auth): 增强随机数生成安全性
 
 MIT License
 
-Copyright (c) 2024
+Copyright (c) 2025 YVSoft. All rights reserved.
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
 
@@ -975,3 +985,8 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 ---
 
 **感谢使用企业级密码生成器！**
+
+<p align="center">
+  <b>Built by <a href="https://github.com/AaronYang233">YVSoft</a></b><br/>
+  <sub>如果觉得好用，欢迎给个 <a href="https://github.com/AaronYang233/yv-passwd">Star :star:</a> 支持一下！</sub>
+</p>
